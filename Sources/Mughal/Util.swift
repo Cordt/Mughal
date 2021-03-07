@@ -65,12 +65,7 @@ public enum SizeClass: String, CaseIterable {
 public enum Quality {
     /// Very low quality picture that can be used as a placeholder and takes very little space
     case placeholder
-    case veryLow
-    case low
-    case medium
-    case high
-    case veryHigh
-    case lossLess
+    case veryLow, low, medium, high, veryHigh, lossLess
     
     internal var webPQuality: Float {
         switch self {

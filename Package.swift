@@ -5,7 +5,6 @@ import PackageDescription
 
 let package = Package(
     name: "Mughal",
-    platforms: [.macOS(.v11)],
     products: [
         .library(
             name: "Mughal",
