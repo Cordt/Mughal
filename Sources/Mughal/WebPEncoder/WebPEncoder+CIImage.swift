@@ -16,6 +16,7 @@ extension WebPEncoder {
         guard let cgImage = convertToCGImageWithRGBA(image) else { throw ImageProcessingError.conversionFailed }
         
         let stride = cgImage.bytesPerRow
+        
         let webPData = try encode(RGBA: unsafeMutablePointer(from: cgImage), config: config,
                                   originWidth: Int(image.extent.maxX), originHeight: Int(image.extent.maxY), stride: stride,
                                   resizeWidth: width, resizeHeight: height)

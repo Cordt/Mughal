@@ -34,7 +34,7 @@ public struct WebPEncoder {
         let importer: WebPPictureImporter = { picturePtr, data, stride in
             return WebPPictureImportRGB(picturePtr, data, stride)
         }
-        return try encode(RGB, importer: importer, config: config, originWidth: originWidth, originHeight: originHeight, stride: stride)
+        return try encode(RGB, importer: importer, config: config, originWidth: originWidth, originHeight: originHeight, stride: stride, resizeWidth: resizeWidth, resizeHeight: resizeHeight)
     }
     
     /// Encodes a picture from RGBA format to WebP
@@ -44,7 +44,7 @@ public struct WebPEncoder {
         let importer: WebPPictureImporter = { picturePtr, data, stride in
             return WebPPictureImportRGBA(picturePtr, data, stride)
         }
-        return try encode(RGBA, importer: importer, config: config, originWidth: originWidth, originHeight: originHeight, stride: stride)
+        return try encode(RGBA, importer: importer, config: config, originWidth: originWidth, originHeight: originHeight, stride: stride, resizeWidth: resizeWidth, resizeHeight: resizeHeight)
     }
     
     private static func encode(_ dataPtr: UnsafeMutablePointer<UInt8>, importer: WebPPictureImporter,
@@ -68,7 +68,9 @@ public struct WebPEncoder {
         }
         
         if resizeHeight > 0 && resizeWidth > 0 {
-            guard (WebPPictureRescale(&picture, Int32(resizeWidth), Int32(resizeHeight)) != 0) else { throw WebPEncodingError.invalidConfiguration }
+            guard (WebPPictureRescale(&picture, Int32(resizeWidth), Int32(resizeHeight)) != 0) else {
+                throw WebPEncodingError.invalidConfiguration
+            }
         }
         
         var buffer = WebPMemoryWriter()

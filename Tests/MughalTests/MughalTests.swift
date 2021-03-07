@@ -9,15 +9,16 @@ final class MughalTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         
-        generateWebP(image: url) { webData in
+        generateWebP(from: url, with: 20) { webData in
             expectation.fulfill()
 //            let attachment = XCTAttachment(data: data!, uniformTypeIdentifier: "Picture1.webp")
 //            attachment.lifetime = .keepAlways
 //            attachment.name = "WebP"
 //            self.add(attachment)
             
-            let url = dlFolder.appendingPathComponent("Picture1.webp")
-            try! webData?.write(to: url)
+            webData.forEach { image in
+                image.save(at: dlFolder)
+            }
         }
         
         wait(for: [expectation], timeout: 5.0)

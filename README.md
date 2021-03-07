@@ -8,7 +8,7 @@ If you want to support the development of this library or are looking for featur
 
 ## Credits and thanks
 
-Mughal uses several librariers that do the havy-lifting in terms of image processing:
+Mughal uses several librariers that do the heavy-lifting in terms of image processing:
 * [libwebp by Google](https://github.com/webmproject/libwebp)
 
 The mapping of the libwebp library to work well in Swift was strongly inspired by [Swift-WebP](https://github.com/ainame/Swift-WebP). If you want to use WebP in iOS or MacOS applications, this is definitely the library you should choose.
