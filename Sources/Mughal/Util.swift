@@ -14,13 +14,13 @@ public struct Image {
         case webP
     }
     
-    let name: String
-    let `extension`: Extension
-    let imageData: Data
-    let sizeClass: SizeClass
+    public let name: String
+    public let `extension`: Extension
+    public let imageData: Data
+    public let sizeClass: SizeClass
     
     /// Saves one image for each size class at the given path
-    func save(at path: URL) {
+    public func save(at path: URL) {
         let url = path.appendingPathComponent("\(name)-\(sizeClass).\(`extension`)")
         do {
             try imageData.write(to: url)
@@ -86,9 +86,9 @@ public enum Quality {
 /// For example, instead of using completion handlers in functions that contain async code,
 /// the function can simply return a Parallel
 public struct Parallel<A> {
-    let run: (@escaping (A) -> Void) -> Void
+    public let run: (@escaping (A) -> Void) -> Void
 
-    func map<B>(_ f: @escaping (A) -> B) -> Parallel<B> {
+    public func map<B>(_ f: @escaping (A) -> B) -> Parallel<B> {
         return Parallel<B> { callback in
             self.run { a in
                 callback(f(a))

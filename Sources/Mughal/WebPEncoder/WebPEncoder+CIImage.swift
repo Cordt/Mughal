@@ -12,7 +12,7 @@ import CWebP
 extension WebPEncoder {
     
     /// Encodes CIImage represented images to WebP images
-    public static func encode(_ image: CIImage, config: WebPConfig, width: Int = 0, height: Int = 0) throws -> Data {
+    static func encode(_ image: CIImage, config: WebPConfig, width: Int = 0, height: Int = 0) throws -> Data {
         guard let cgImage = convertToCGImageWithRGBA(image) else { throw ImageProcessingError.conversionFailed }
         
         let stride = cgImage.bytesPerRow

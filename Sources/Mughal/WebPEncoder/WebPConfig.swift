@@ -13,104 +13,104 @@ import CWebP
 /// Mapping of CWebP.WebPConfig
 ///
 /// Compression parameters.
-public struct WebPConfig {
+struct WebPConfig {
     
     /// Lossless encoding (0=lossy(default), 1=lossless).
-    public var lossless: Int = 0
+    var lossless: Int = 0
     
     /// between 0 and 100. For lossy, 0 gives the smallest
     /// size and 100 the largest. For lossless, this
     /// parameter is the amount of effort put into the
     /// compression: 0 is the fastest but gives larger
     /// files compared to the slowest, but best, 100.
-    public var quality: Float
+    var quality: Float
     
     /// quality/speed trade-off (0=fast, 6=slower-better)
-    public var method: Int
+    var method: Int
     
     /// Hint for image type (lossless only for now).
-    public var imageHint: WebPImageHint = .default
+    var imageHint: WebPImageHint = .default
     
     /// if non-zero, set the desired target size in bytes.
     /// Takes precedence over the 'compression' parameter.
-    public var targetSize: Int = 0
+    var targetSize: Int = 0
     
     /// if non-zero, specifies the minimal distortion to
     /// try to achieve. Takes precedence over target_size.
-    public var targetPSNR: Float = 0
+    var targetPSNR: Float = 0
     
     /// maximum number of segments to use, in [1..4]
-    public var segments: Int
+    var segments: Int
     
     /// Spatial Noise Shaping. 0=off, 100=maximum.
-    public var snsStrength: Int
+    var snsStrength: Int
     
     /// range: [0 = off .. 100 = strongest]
-    public var filterStrength: Int
+    var filterStrength: Int
     
     /// range: [0 = off .. 7 = least sharp]
-    public var filterSharpness: Int
+    var filterSharpness: Int
     
     /// filtering type: 0 = simple, 1 = strong (only used
     /// if filter_strength > 0 or autofilter > 0)
-    public var filterType: Int
+    var filterType: Int
     
     /// Auto adjust filter's strength [0 = off, 1 = on]
-    public var autofilter: Int
+    var autofilter: Int
     
     /// Algorithm for encoding the alpha plane (0 = none,
     /// 1 = compressed with WebP lossless). Default is 1.
-    public var alphaCompression: Int = 1
+    var alphaCompression: Int = 1
     
     /// Predictive filtering method for alpha plane.
     /// 0: none, 1: fast, 2: best. Default if 1.
-    public var alphaFiltering: Int
+    var alphaFiltering: Int
     
     /// Between 0 (smallest size) and 100 (lossless).
     /// Default is 100.
-    public var alphaQuality: Int = 100
+    var alphaQuality: Int = 100
     
     /// number of entropy-analysis passes (in [1..10]).
-    public var pass: Int
+    var pass: Int
     
     /// if true, export the compressed picture back.
     /// In-loop filtering is not applied.
-    public var showCompressed: Bool
+    var showCompressed: Bool
     
     /// preprocessing filter:
     /// 0=none, 1=segment-smooth, 2=pseudo-random dithering
-    public var preprocessing: Int
+    var preprocessing: Int
     
     /// log2(number of token partitions) in [0..3]. Default
     /// is set to 0 for easier progressive decoding.
-    public var partitions: Int = 0
+    var partitions: Int = 0
     
     /// quality degradation allowed to fit the 512k limit
     /// on prediction modes coding (0: no degradation,
     /// 100: maximum possible degradation).
-    public var partitionLimit: Int
+    var partitionLimit: Int
     
     /// If true, compression parameters will be remapped
     /// to better match the expected output size from
     /// JPEG compression. Generally, the output size will
     /// be similar but the degradation will be lower.
-    public var emulateJpegSize: Bool
+    var emulateJpegSize: Bool
     
     /// If non-zero, try and use multi-threaded encoding.
-    public var threadLevel: Int
+    var threadLevel: Int
     
     /// If set, reduce memory usage (but increase CPU use).
-    public var lowMemory: Bool
+    var lowMemory: Bool
     
     /// Near lossless encoding [0 = max loss .. 100 = off
     /// (default)].
-    public var nearLossless: Int = 100
+    var nearLossless: Int = 100
     
     /// if non-zero, preserve the exact RGB values under
     /// transparent area. Otherwise, discard this invisible
     /// RGB information for better compression. The default
     /// value is 0.
-    public var exact: Int
+    var exact: Int
     
     /// reserved for future lossless feature
     var useDeltaPalette: Bool
@@ -128,7 +128,7 @@ public struct WebPConfig {
     /// set of parameters (referred to by 'preset') and a given quality factor.
     /// This function can be called as a replacement to WebPConfigInit(). Will
     /// return false in case of error.
-    static public func preset(_ preset: WebPPreset, quality: Float) -> WebPConfig {
+    static func preset(_ preset: WebPPreset, quality: Float) -> WebPConfig {
         let webPConfig = preset.webPConfig(quality: quality)
         return WebPConfig(rawValue: webPConfig)!
     }

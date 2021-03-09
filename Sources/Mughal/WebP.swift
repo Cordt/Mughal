@@ -9,7 +9,7 @@ import Foundation
 import CoreImage
 import CWebP
 
-struct WebP {
+public struct WebP {
     
     /// Generates WebP images from the image at the given URL in all available size classes
     public static func generateWebP(from url: URL, with quality: Quality) -> Parallel<[Image]> {

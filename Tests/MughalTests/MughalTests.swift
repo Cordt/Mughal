@@ -8,7 +8,7 @@ final class MughalTests: XCTestCase {
         let dlFolder = try! FileManager.default.url(for: .downloadsDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
         
         let expectation = XCTestExpectation()
-        
+        print(url)
         let images = WebP.generateWebP(from: url, with: .low)
         images.run { images in
             images.forEach { image in
