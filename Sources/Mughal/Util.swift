@@ -14,14 +14,20 @@ public struct Image {
         case webP
     }
     
+    /// Name of the file (w/o file extension or size class)
     public let name: String
     public let `extension`: Extension
     public let imageData: Data
     public let sizeClass: SizeClass
     
+    /// Full file name in the form of 'name-sizeClass.extension'
+    public var fileName: String {
+        "\(name)-\(sizeClass).\(`extension`)"
+    }
+    
     /// Saves one image for each size class at the given path
     public func save(at path: URL) {
-        let url = path.appendingPathComponent("\(name)-\(sizeClass).\(`extension`)")
+        let url = path.appendingPathComponent(fileName)
         do {
             try imageData.write(to: url)
             
