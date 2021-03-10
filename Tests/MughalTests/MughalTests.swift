@@ -10,7 +10,7 @@ final class MughalTests: XCTestCase {
         
         let expectation = XCTestExpectation()
         
-        let images = WebP.generateWebP(with: .low, from: url1, url2)
+        let images = WebP.generateWebP(with: .low, from: [url1, url2])
         images.run { images in
             images.forEach { image in
                 image.save(at: dlFolder)

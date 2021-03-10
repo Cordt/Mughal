@@ -12,7 +12,7 @@ import CWebP
 public struct WebP {
     
     /// Generates WebP images from the image at the given URL in all available size classes
-    public static func generateWebP(with quality: Quality, from urls: URL...) -> Parallel<[Image]> {
+    public static func generateWebP(with quality: Quality, from urls: [URL]) -> Parallel<[Image]> {
         let queue = DispatchQueue(label: "mughal.image-processing")
         let group = DispatchGroup()
         
@@ -73,5 +73,9 @@ public struct WebP {
             print("Image processing timed out - process aborted")
             return Parallel { $0([]) }
         }
+    }
+    
+    public static func generateWebP(with quality: Quality, from urls: URL...) -> Parallel<[Image]> {
+        generateWebP(with: quality, from: urls)
     }
 }
