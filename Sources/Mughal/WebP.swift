@@ -65,7 +65,7 @@ public struct WebP {
             }
         }
         
-        switch group.wait(timeout: DispatchTime.now() + DispatchTimeInterval.seconds(5)) {
+        switch group.wait(timeout: DispatchTime.now() + DispatchTimeInterval.seconds(30)) {
         case .success:
             return Parallel { $0(images) }
             
