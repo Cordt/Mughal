@@ -12,54 +12,64 @@ import CWebP
 public struct WebP {
     
     /// Generates WebP images from the image at the given URL in all available size classes
-    public static func generateWebP(with quality: Quality, from urls: [URL]) -> Parallel<[Image]> {
+    public static func generateImages(with quality: Quality, for configurations: [ImageConfiguration]) -> Parallel<[Image]> {
         let queue = DispatchQueue(label: "mughal.image-processing")
         let group = DispatchGroup()
         
-        struct ImageConfiguration {
-            struct Config {
-                var sizeClass: SizeClass
-                var dimensions: (Int, Int)
-                var imageConfig: WebPConfig
-            }
-            var image: CIImage
-            var fileName: String
-            var configurations: [Config]
+        configurations.forEach {
+            precondition($0.targetExtension == .webp, "Only WebP is supported as a target extension as of now")
         }
         
-        // Group core image with image file name
-        let imageConfigurations: [ImageConfiguration] = urls.compactMap { url in
-            let imageName = url.lastPathComponent.split(separator: ".").first.map { String($0) }
-            guard let ciImage = CIImage.init(contentsOf: url),
-                  let honestImageName = imageName else {
+        struct EncodableImage {
+            var config: WebPConfig
+            var image: CIImage
+            var dimensions: (Int, Int)
+            var name: String
+            var `extension`: Image.Extension
+        }
+        
+        // Prepare encodable images
+        let encodableImages: [EncodableImage] = configurations.compactMap { config in
+            guard let ciImage = CIImage.init(contentsOf: config.url),
+                  let fileName = config.fileName else {
                 return nil
             }
             
-            // Create one image for each size class
-            let configurations: [ImageConfiguration.Config] = SizeClass.allCases.map { sizeClass in
-                let newSize = sizeClass.sizeThatFits(for: (ciImage.extent.width, ciImage.extent.height))
-                var config: WebPConfig = .preset(.picture, quality: quality.webPQuality)
-                if quality == .lossLess { config.lossless = 1 }
-                return ImageConfiguration.Config(sizeClass: sizeClass, dimensions: newSize, imageConfig: config)
-            }
-
-            return ImageConfiguration(image: ciImage, fileName: honestImageName, configurations: configurations)
+            var webPConfig: WebPConfig = .preset(.picture, quality: quality.webPQuality)
+            if quality == .lossLess { webPConfig.lossless = 1 }
+            
+            return EncodableImage(
+                config: webPConfig,
+                image: ciImage,
+                dimensions: config.targetDimensions,
+                name: fileName,
+                extension: config.targetExtension
+            )
         }
 
         var images: [Image] = [Image]()
         
-        imageConfigurations.forEach { imageConfig in
+        encodableImages.forEach { encodableImage in
             group.enter()
             queue.async {
                 do {
-                    try imageConfig.configurations.forEach { config in
-                        let data = try WebPEncoder.encode(imageConfig.image, config: config.imageConfig, width: config.dimensions.0, height: config.dimensions.1)
-                        images.append(Image(name: imageConfig.fileName, extension: .webP, imageData: data, sizeClass: config.sizeClass))
-                    }
+                    let data = try WebPEncoder.encode(
+                        encodableImage.image,
+                        config: encodableImage.config,
+                        width: encodableImage.dimensions.0,
+                        height: encodableImage.dimensions.1
+                    )
+                    images.append(
+                        Image(
+                            name: encodableImage.name,
+                            extension: encodableImage.extension,
+                            imageData: data
+                        )
+                    )
                     group.leave()
                     
                 } catch let error {
-                    print(error)
+                    print("Failed to encode image with error: \(error)")
                     group.leave()
                 }
             }
@@ -75,7 +85,7 @@ public struct WebP {
         }
     }
     
-    public static func generateWebP(with quality: Quality, from urls: URL...) -> Parallel<[Image]> {
-        generateWebP(with: quality, from: urls)
+    public static func generateImages(with quality: Quality, for configurations: ImageConfiguration...) -> Parallel<[Image]> {
+        generateImages(with: quality, for: configurations)
     }
 }
