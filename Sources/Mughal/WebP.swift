@@ -29,26 +29,26 @@ public struct WebP {
         }
         
         // Prepare encodable images
-        let encodableImages: [EncodableImage] = configurations.compactMap { config in
-            guard let ciImage = CIImage.init(contentsOf: config.url),
-                  let fileName = config.fileName else {
-                return nil
-            }
+        var encodableImages: [EncodableImage] = []
+        configurations.forEach { config in
+            guard let ciImage = CIImage.init(contentsOf: config.url) else { return }
             
             var webPConfig: WebPConfig = .preset(.picture, quality: quality.webPQuality)
             if quality == .lossLess { webPConfig.lossless = 1 }
             
-            return EncodableImage(
-                config: webPConfig,
-                image: ciImage,
-                dimensions: config.targetDimensions,
-                name: fileName,
-                extension: config.targetExtension
-            )
+            encodableImages += config.targetSizes
+                .map { size in
+                    EncodableImage(
+                        config: webPConfig,
+                        image: ciImage,
+                        dimensions: sizeThatFits(for: (ciImage.extent.width, ciImage.extent.height), within: size.dimensionsUpperBound),
+                        name: size.fileName,
+                        extension: config.targetExtension
+                    )
+            }
         }
 
         var images: [Image] = [Image]()
-        
         encodableImages.forEach { encodableImage in
             group.enter()
             queue.async {
@@ -63,7 +63,9 @@ public struct WebP {
                         Image(
                             name: encodableImage.name,
                             extension: encodableImage.extension,
-                            imageData: data
+                            imageData: data,
+                            width: encodableImage.dimensions.0,
+                            height: encodableImage.dimensions.1
                         )
                     )
                     group.leave()

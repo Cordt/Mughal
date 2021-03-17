@@ -46,17 +46,23 @@ final class MughalTests: XCTestCase {
     
     func testImageIsEncoded() {
         let url1 = Bundle.module.url(forResource: "Picture1", withExtension: "jpg")!
-        let targetDimensions1 = sizeThatFits(for: (640, 960), within: 600)
         let url2 = Bundle.module.url(forResource: "Picture2", withExtension: "jpg")!
-        let targetDimensions2 = sizeThatFits(for: (2048, 1430), within: 600)
+        let sizes1 = [
+            ImageConfiguration.Size(fileName: "Picture1-small", dimensionsUpperBound: 600),
+            ImageConfiguration.Size(fileName: "Picture1-large", dimensionsUpperBound: 1200)
+        ]
+        let sizes2 = [
+            ImageConfiguration.Size(fileName: "Picture2-small", dimensionsUpperBound: 600),
+            ImageConfiguration.Size(fileName: "Picture2-large", dimensionsUpperBound: 1200)
+        ]
         
         let expectation = XCTestExpectation()
         
         let images = WebP.generateImages(
             with: .low,
             for: [
-                ImageConfiguration(url: url1, targetExtension: .webp, targetDimensions: targetDimensions1),
-                ImageConfiguration(url: url2, targetExtension: .webp, targetDimensions: targetDimensions2)
+                ImageConfiguration(url: url1, extension: .jpg, targetExtension: .webp, targetSizes: sizes1),
+                ImageConfiguration(url: url2, extension: .jpg, targetExtension: .webp, targetSizes: sizes2)
             ]
         )
         images.run { images in
@@ -70,13 +76,18 @@ final class MughalTests: XCTestCase {
         wait(for: [expectation], timeout: 2.0)
         
         // Images have been stored to the designated location
-        XCTAssertTrue(FileManager.default.fileExists(atPath: testDirectory.appendingPathComponent("Picture1.webp").path))
-        XCTAssertTrue(FileManager.default.fileExists(atPath: testDirectory.appendingPathComponent("Picture2.webp").path))
+        guard let image1Small = CIImage(contentsOf: testDirectory.appendingPathComponent("Picture1-small.webp")),
+              let image1Large = CIImage(contentsOf: testDirectory.appendingPathComponent("Picture1-large.webp")),
+              let image2Small = CIImage(contentsOf: testDirectory.appendingPathComponent("Picture2-small.webp")),
+              let image2Large = CIImage(contentsOf: testDirectory.appendingPathComponent("Picture2-large.webp")) else {
+            XCTFail("Expected images have not been created")
+            return
+        }
         
         // Images have correct dimensions
-        let image1 = CIImage(contentsOf: testDirectory.appendingPathComponent("Picture1.webp"))!
-        let image2 = CIImage(contentsOf: testDirectory.appendingPathComponent("Picture2.webp"))!
-        XCTAssertTrue(image1.extent.width <= 600 && image1.extent.height <= 600)
-        XCTAssertTrue(image2.extent.width <= 600 && image2.extent.height <= 600)
+        XCTAssertTrue(image1Small.extent.width <= 600 && image1Small.extent.height <= 600)
+        XCTAssertTrue(image1Large.extent.width <= 1200 && image1Large.extent.height <= 1200)
+        XCTAssertTrue(image2Small.extent.width <= 600 && image2Small.extent.height <= 600)
+        XCTAssertTrue(image2Large.extent.width <= 1200 && image2Large.extent.height <= 1200)
     }
 }
